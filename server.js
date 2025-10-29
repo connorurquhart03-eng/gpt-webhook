@@ -6,11 +6,11 @@ const fetch = require('node-fetch');
 const app = express();
 app.use(bodyParser.json());
 
-// Use Render Environment Variable instead of hardcoding
+// Read GPT API key from Render environment variable
 const GPT_API_KEY = process.env.GPT_API_KEY;
 
 app.post('/', async (req, res) => {
-    console.log('Received request:', JSON.stringify(req.body, null, 2)); // logs everything
+    console.log('Received request:', JSON.stringify(req.body, null, 2));
 
     const userQuery = req.body.queryResult?.queryText || "No input";
 
@@ -39,5 +39,6 @@ app.post('/', async (req, res) => {
     }
 });
 
+// Use dynamic port for Render
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
