@@ -9,6 +9,11 @@ app.use(bodyParser.json());
 // Read GPT API key from Render environment variable
 const GPT_API_KEY = process.env.GPT_API_KEY;
 
+if (!GPT_API_KEY) {
+    console.error("ERROR: GPT_API_KEY environment variable not set!");
+    process.exit(1); // stop the server if API key is missing
+}
+
 app.post('/', async (req, res) => {
     console.log('Received request:', JSON.stringify(req.body, null, 2));
 
@@ -34,7 +39,7 @@ app.post('/', async (req, res) => {
 
         res.json({ fulfillmentText: gptReply });
     } catch (err) {
-        console.error('Error:', err);
+        console.error('Error talking to GPT:', err);
         res.json({ fulfillmentText: "Error talking to GPT" });
     }
 });
