@@ -1,7 +1,6 @@
 // server.js
 const express = require('express');
 const bodyParser = require('body-parser');
-const fetch = require('node-fetch');
 
 const app = express();
 app.use(bodyParser.json());
@@ -11,7 +10,7 @@ const GPT_API_KEY = process.env.GPT_API_KEY;
 
 if (!GPT_API_KEY) {
     console.error("ERROR: GPT_API_KEY environment variable not set!");
-    process.exit(1);
+    process.exit(1); // stop the server if API key is missing
 }
 
 app.post('/', async (req, res) => {
@@ -20,6 +19,7 @@ app.post('/', async (req, res) => {
     const userQuery = req.body.queryResult?.queryText || "No input";
 
     try {
+        // Use Node 18+ built-in fetch
         const response = await fetch('https://api.openai.com/v1/chat/completions', {
             method: 'POST',
             headers: {
@@ -37,27 +37,10 @@ app.post('/', async (req, res) => {
 
         const gptReply = data.choices?.[0]?.message?.content || "No response from GPT";
 
-        // Send as a custom payload
-        res.json({
-            fulfillmentMessages: [
-                {
-                    payload: {
-                        message: gptReply
-                    }
-                }
-            ]
-        });
+        res.json({ fulfillmentText: gptReply });
     } catch (err) {
         console.error('Error talking to GPT:', err);
-        res.json({
-            fulfillmentMessages: [
-                {
-                    payload: {
-                        message: "Error talking to GPT"
-                    }
-                }
-            ]
-        });
+        res.json({ fulfillmentText: "Error talking to GPT" });
     }
 });
 
