@@ -1,7 +1,6 @@
 // server.js
 const express = require('express');
 const bodyParser = require('body-parser');
-const fetch = require('node-fetch');
 
 const app = express();
 app.use(bodyParser.json());
@@ -20,6 +19,7 @@ app.post('/', async (req, res) => {
     const userQuery = req.body.queryResult?.queryText || "No input";
 
     try {
+        // Use Node 18+ built-in fetch
         const response = await fetch('https://api.openai.com/v1/chat/completions', {
             method: 'POST',
             headers: {
